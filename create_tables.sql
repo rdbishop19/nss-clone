@@ -7,7 +7,25 @@ DROP TABLE IF EXISTS student_roster;
 DROP TABLE IF EXISTS instructor_roster;
 DROP TABLE IF EXISTS assignments;
 
-CREATE TABLE students (
+CREATE TABLE IF NOT EXISTS instructors (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  firstName TEXT NOT NULL,
+  lastName TEXT NOT NULL,
+  slackHandle TEXT,
+  speciality TEXT
+);
+
+CREATE TABLE IF NOT EXISTS cohorts (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS languages (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS students (
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   firstName TEXT NOT NULL,
   lastName TEXT NOT NULL,
@@ -16,40 +34,22 @@ CREATE TABLE students (
   FOREIGN KEY (cohortId) REFERENCES cohorts (id)
 );
 
-CREATE TABLE instructors (
-  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  firstName TEXT NOT NULL,
-  lastName TEXT NOT NULL,
-  slackHandle TEXT,
-  speciality TEXT
-);
-
-CREATE TABLE cohorts (
-  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL UNIQUE
-);
-
-CREATE TABLE exercises (
+CREATE TABLE IF NOT EXISTS exercises (
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   language INTEGER,
   FOREIGN KEY (language) REFERENCES languages (id)
 );
 
-CREATE TABLE languages (
-  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT UNIQUE
-);
+--CREATE TABLE IF NOT EXISTS student_roster (
+--  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+--  studentId INTEGER NOT NULL,
+--  cohortId INTEGER NOT NULL,
+--  FOREIGN KEY (cohortId) REFERENCES cohorts (id),
+--  FOREIGN KEY (studentId) REFERENCES students (id)
+--);
 
-CREATE TABLE student_roster (
-  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  studentId INTEGER NOT NULL,
-  cohortId INTEGER NOT NULL,
-  FOREIGN KEY (cohortId) REFERENCES cohorts (id),
-  FOREIGN KEY (studentId) REFERENCES students (id)
-);
-
-CREATE TABLE instructor_roster (
+CREATE TABLE IF NOT EXISTS instructor_roster (
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   instructorId INTEGER NOT NULL,
   cohortId INTEGER NOT NULL,
@@ -57,13 +57,10 @@ CREATE TABLE instructor_roster (
   FOREIGN KEY (instructorId) REFERENCES instructors (id)
 );
 
-CREATE TABLE assignments (
+CREATE TABLE IF NOT EXISTS assignments (
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   studentId INTEGER NOT NULL,
   exerciseId INTEGER NOT NULL,
   FOREIGN KEY (exerciseId) REFERENCES exercises (id),
   FOREIGN KEY (studentId) REFERENCES students (id)
 );
-
-
-
