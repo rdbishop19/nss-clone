@@ -34,5 +34,46 @@ class StudentExerciseReports():
             for student in all_students:
                 print(student)
 
-reports = StudentExerciseReports()
-reports.all_students()
+    def students_per_exercise(self):
+
+        """Print which students are working on which exercises."""
+
+        exercises = dict()
+
+        with sqlite3.connect(self.db_path) as conn:
+            db_cursor = conn.cursor()
+        
+            db_cursor.execute("""
+                SELECT
+                    firstName, 
+                    lastName, 
+                    e.name as 'Exercise', 
+                    l.name as 'Language'
+                FROM exercises e
+                JOIN assignments a ON a.exerciseId = e.id
+                JOIN students s ON s.id = a.studentId
+                JOIN languages l ON l.id = e."language";    
+            """)
+        
+            dataset = db_cursor.fetchall()
+
+            for row in dataset:
+                exercise_name = row[2]
+                student_name = f'{row[0]} {row[1]}'
+
+                if exercise_name not in exercises:
+                    exercises[exercise_name] = []
+                exercises[exercise_name].append(student_name)
+            
+            for exercise_name, students in exercises.items():
+                print()
+                print(exercise_name)
+                print('-'*len(exercise_name))
+                for student in students:
+                    print(f'  * {student}')
+
+if __name__ == "__main__":
+    
+    reports = StudentExerciseReports()
+    # reports.all_students()
+    reports.students_per_exercise()
